@@ -4,5 +4,5 @@ OPT = -L/usr/local/Cellar/libsndfile/1.0.25/lib/ \
 	-L/usr/local/Cellar/portaudio/19.20140130/lib/
 
 all:
-	g++ -lportaudio -lsndfile sndfile.cc portaudio.cc $(OPT)
+	g++ -lportaudio -lsndfile wavReader.cc portaudio.cc $(OPT)
 

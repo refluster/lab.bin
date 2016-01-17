@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sndfile.h>
-#include "sndfile.h"
+#include "wavReader.h"
 
 int WavReader::init() {
 	// Open sound file

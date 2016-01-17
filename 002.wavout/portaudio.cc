@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <portaudio.h>
-#include "sndfile.h"
+#include "wavReader.h"
 
 #define NUM_SECONDS 3
 #define SAMPLE_RATE 44100
