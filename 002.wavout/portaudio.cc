@@ -7,6 +7,7 @@
 
 #define NUM_SECONDS 3
 #define SAMPLE_RATE 44100
+#define FRAMES_PER_BUFFER 256
 
 static WavReader *wr;
 static CombFilter *cf;
@@ -56,7 +57,7 @@ int main() {
 
 	err = Pa_Initialize();
 	if (err != paNoError) {
-		printf(  "PortAudio error: %s\n", Pa_GetErrorText( err ) );
+		printf("PortAudio error: %s\n", Pa_GetErrorText(err));
 		return -1;
 	}
 
@@ -66,16 +67,9 @@ int main() {
 							   1,          /* mono output */
 							   paFloat32,  /* 32 bit floating point output */
 							   SAMPLE_RATE,
-							   256,        /* frames per buffer, i.e. the number
-											  of sample frames that PortAudio wavill
-											  request from the callback. Many apps
-											  may want to use
-											  paFramesPerBufferUnspecified, which
-											  tells PortAudio to pick the best,
-											  possibly changing, buffer size. */
+							   FRAMES_PER_BUFFER,        /* frames per buffer */
 							   patestCallback, /* this is your callback function */
-							   NULL );     /* This is a pointer that will be passed to
-											  your callback */
+							   NULL );     /* This is a pointer that will be passed to your callback */
 	if (err != paNoError) {
 		printf("PortAudio error: %s\n", Pa_GetErrorText(err));
 		return -1;
