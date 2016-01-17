@@ -54,7 +54,7 @@ int wavRead(float *v) {
 	if (stat.ptr == stat.bufEnd) {
 		// Load data
 		long numFrames = sf_readf_float(stat.sndFile, stat.bufStart, stat.sndInfo.frames);
-	
+
 		// Check correct number of samples loaded
 		if (numFrames != stat.sndInfo.frames) {
 			//fprintf(stderr, "Did not read enough frames for source\n");
@@ -76,16 +76,3 @@ void wavFini() {
 	sf_close(stat.sndFile);
 	free(stat.bufStart);
 }
-
-#if 0
-int testmain(int argc, char *argv[]) {
-	int i;
-
-	wavInit();
-	for (i = 0; i < 10; i++) {
-		printf("%f\n", wavRead());
-	}
-	wavFini();
-	return 0;
-}
-#endif
