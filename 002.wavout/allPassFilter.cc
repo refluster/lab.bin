@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "allPassFilter.h"
+#include "common.h"
 
 AllPassFilter::AllPassFilter(size_t size, float g) {
 	this->size = size;

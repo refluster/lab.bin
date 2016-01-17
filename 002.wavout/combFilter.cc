@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "combFilter.h"
+#include "common.h"
 
 CombFilter::CombFilter(size_t size, float g) {
 	this->size = size;

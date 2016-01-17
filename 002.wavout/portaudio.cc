@@ -4,9 +4,9 @@
 #include "wavReader.h"
 #include "combFilter.h"
 #include "allPassFilter.h"
+#include "common.h"
 
 #define NUM_SECONDS 3
-#define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 256
 
 static WavReader *wr;
@@ -17,11 +17,11 @@ static AllPassFilter *apf;
    It may called at interrupt level on some machines so don't do anything
    that could mess up the system like calling malloc() or free().
 */ 
-static int patestCallback( const void *inputBuffer, void *outputBuffer,
-						   unsigned long framesPerBuffer,
-						   const PaStreamCallbackTimeInfo* timeInfo,
-						   PaStreamCallbackFlags statusFlags,
-						   void *userData ) {
+static int patestCallback(const void *inputBuffer, void *outputBuffer,
+						  unsigned long framesPerBuffer,
+						  const PaStreamCallbackTimeInfo* timeInfo,
+						  PaStreamCallbackFlags statusFlags,
+						  void *userData ) {
 	/* Cast data passed through stream to our structure. */
 	float *out = (float*)outputBuffer;
 	float *in = (float*)inputBuffer;
