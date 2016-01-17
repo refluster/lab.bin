@@ -45,8 +45,6 @@ int main() {
 
 	wr = new WavReader();
 
-	wr->init();
-
 	err = Pa_Initialize();
 	if (err != paNoError) {
 		printf(  "PortAudio error: %s\n", Pa_GetErrorText( err ) );
@@ -94,7 +92,7 @@ int main() {
 		printf("PortAudio error: %s\n", Pa_GetErrorText(err));
 	}
 
-	wr->fini();
+	delete wr;
 
 	return 0;
 }

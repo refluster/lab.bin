@@ -3,7 +3,7 @@
 #include <sndfile.h>
 #include "wavReader.h"
 
-int WavReader::init() {
+WavReader::WavReader() {
 	// Open sound file
 	const char *fname = "water-drop1.wav";
 
@@ -11,21 +11,21 @@ int WavReader::init() {
 
 	if (this->sndFile == NULL) {
 		fprintf(stderr, "Error reading source file '%s': %s\n", fname, sf_strerror(this->sndFile));
-		return 1;
+		exit(1);
 	}
 
 	// Check format - 16bit PCM
 	if (this->sndInfo.format != (SF_FORMAT_WAV | SF_FORMAT_PCM_16)) {
 		fprintf(stderr, "Input should be 16bit Wav\n");
 		sf_close(this->sndFile);
-		return 1;
+		exit(1);
 	}
 
 	// Check channels - mono
 	if (this->sndInfo.channels != 1) {
 		fprintf(stderr, "Wrong number of channels\n");
 		sf_close(this->sndFile);
-		return 1;
+		exit(1);
 	}
 
 	// Allocate memory
@@ -35,10 +35,13 @@ int WavReader::init() {
 	if (this->bufStart == NULL) {
 		fprintf(stderr, "Could not allocate memory for data\n");
 		sf_close(this->sndFile);
-		return 1;
+		exit(1);
 	}
+}
 
-	return 0;
+WavReader::~WavReader() {
+	sf_close(this->sndFile);
+	free(this->bufStart);
 }
 
 int WavReader::read(float *v) {
@@ -65,7 +68,3 @@ int WavReader::read(float *v) {
 	return 0;
 }
 
-void WavReader::fini() {
-	sf_close(this->sndFile);
-	free(this->bufStart);
-}
