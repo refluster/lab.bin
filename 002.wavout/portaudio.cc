@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <math.h>
-#include "portaudio.h"
+#include <portaudio.h>
+#include "sndfile.h"
 
 #define NUM_SECONDS 3
 #define SAMPLE_RATE 44100
 
-int wavInit();
-int wavRead(float*);
-void wavFini();
+static WavReader *wr;
 
 /* This routine will be called by the PortAudio engine when audio is needed.
    It may called at interrupt level on some machines so don't do anything
@@ -32,7 +31,7 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
 
 	for(i = 0; i < framesPerBuffer; i++) {
 		float f;
-		if (wavRead(&f) != 0) {
+		if (wr->read(&f) != 0) {
 			f = 0;
 		}
 		*out++ = f;
@@ -44,7 +43,9 @@ int main() {
 	PaStream *stream;
 	PaError err;
 
-	wavInit();
+	wr = new WavReader();
+
+	wr->init();
 
 	err = Pa_Initialize();
 	if (err != paNoError) {
@@ -59,7 +60,7 @@ int main() {
 							   paFloat32,  /* 32 bit floating point output */
 							   SAMPLE_RATE,
 							   256,        /* frames per buffer, i.e. the number
-											  of sample frames that PortAudio will
+											  of sample frames that PortAudio wavill
 											  request from the callback. Many apps
 											  may want to use
 											  paFramesPerBufferUnspecified, which
@@ -93,7 +94,7 @@ int main() {
 		printf("PortAudio error: %s\n", Pa_GetErrorText(err));
 	}
 
-	wavFini();
+	wr->fini();
 
 	return 0;
 }

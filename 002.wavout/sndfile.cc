@@ -1,78 +1,71 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sndfile.h>
+#include "sndfile.h"
 
-static struct {
-	float *ptr;
-	float *bufStart;
-	float *bufEnd;
-	SNDFILE *sndFile;
-	SF_INFO sndInfo;
-} stat;
-
-int wavInit() {
+int WavReader::init() {
 	// Open sound file
 	const char *fname = "water-drop1.wav";
 
-	stat.sndFile = sf_open(fname, SFM_READ, &stat.sndInfo);
+	this->sndFile = sf_open(fname, SFM_READ, &this->sndInfo);
 
-	if (stat.sndFile == NULL) {
-		fprintf(stderr, "Error reading source file '%s': %s\n", fname, sf_strerror(stat.sndFile));
+	if (this->sndFile == NULL) {
+		fprintf(stderr, "Error reading source file '%s': %s\n", fname, sf_strerror(this->sndFile));
 		return 1;
 	}
 
 	// Check format - 16bit PCM
-	if (stat.sndInfo.format != (SF_FORMAT_WAV | SF_FORMAT_PCM_16)) {
+	if (this->sndInfo.format != (SF_FORMAT_WAV | SF_FORMAT_PCM_16)) {
 		fprintf(stderr, "Input should be 16bit Wav\n");
-		sf_close(stat.sndFile);
+		sf_close(this->sndFile);
 		return 1;
 	}
 
 	// Check channels - mono
-	if (stat.sndInfo.channels != 1) {
+	if (this->sndInfo.channels != 1) {
 		fprintf(stderr, "Wrong number of channels\n");
-		sf_close(stat.sndFile);
+		sf_close(this->sndFile);
 		return 1;
 	}
 
 	// Allocate memory
-	stat.bufStart = (float*)malloc(stat.sndInfo.frames * sizeof(float));
-	stat.bufEnd = stat.bufStart + stat.sndInfo.frames;
-	stat.ptr = stat.bufEnd;
-	if (stat.bufStart == NULL) {
+	this->bufStart = (float*)malloc(this->sndInfo.frames * sizeof(float));
+	this->bufEnd = this->bufStart + this->sndInfo.frames;
+	this->ptr = this->bufEnd;
+	if (this->bufStart == NULL) {
 		fprintf(stderr, "Could not allocate memory for data\n");
-		sf_close(stat.sndFile);
+		sf_close(this->sndFile);
 		return 1;
 	}
 
 	return 0;
 }
 
-int wavRead(float *v) {
+int WavReader::read(float *v) {
 	*v = 0;
 
-	if (stat.ptr == stat.bufEnd) {
+	if (this->ptr == this->bufEnd) {
 		// Load data
-		long numFrames = sf_readf_float(stat.sndFile, stat.bufStart, stat.sndInfo.frames);
+		long numFrames = sf_readf_float(this->sndFile, this->bufStart, this->sndInfo.frames);
 
 		// Check correct number of samples loaded
-		if (numFrames != stat.sndInfo.frames) {
+		if (numFrames != this->sndInfo.frames) {
 			//fprintf(stderr, "Did not read enough frames for source\n");
-			//sf_close(stat.sndFile);
-			//free(stat.bufStart);
+			//sf_close(this->sndFile);
+			//free(this->bufStart);
 			return 1;
 		}
 
-		stat.ptr = stat.bufStart;
+		this->ptr = this->bufStart;
 	} else {
-		++stat.ptr;
+		++this->ptr;
 	}
 
-	*v = *stat.ptr;
+	*v = *this->ptr;
 	return 0;
 }
 
-void wavFini() {
-	sf_close(stat.sndFile);
-	free(stat.bufStart);
+void WavReader::fini() {
+	sf_close(this->sndFile);
+	free(this->bufStart);
 }
