@@ -2,11 +2,15 @@
 #include <math.h>
 #include <portaudio.h>
 #include "wavReader.h"
+#include "combFilter.h"
+#include "allPassFilter.h"
 
 #define NUM_SECONDS 3
 #define SAMPLE_RATE 44100
 
 static WavReader *wr;
+static CombFilter *cf;
+static AllPassFilter *apf;
 
 /* This routine will be called by the PortAudio engine when audio is needed.
    It may called at interrupt level on some machines so don't do anything
@@ -30,11 +34,14 @@ static int patestCallback( const void *inputBuffer, void *outputBuffer,
 	}
 
 	for(i = 0; i < framesPerBuffer; i++) {
-		float f;
-		if (wr->read(&f) != 0) {
-			f = 0;
+		float _in;
+		float _out;
+		if (wr->read(&_in) != 0) {
+			_in = 0.0f;
 		}
-		*out++ = f;
+		//cf->enqdeq(&_in, &_out);
+		apf->enqdeq(&_in, &_out);
+		*out++ = _out;
 	}
 	return 0;
 }
@@ -44,6 +51,8 @@ int main() {
 	PaError err;
 
 	wr = new WavReader();
+	cf = new CombFilter(22050, .8f);
+	apf = new AllPassFilter(22050, .5f);
 
 	err = Pa_Initialize();
 	if (err != paNoError) {
@@ -93,6 +102,9 @@ int main() {
 	}
 
 	delete wr;
+	delete cf;
+	delete apf;
 
 	return 0;
 }
+
