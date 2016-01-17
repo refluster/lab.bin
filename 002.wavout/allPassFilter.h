@@ -1,6 +1,8 @@
 #ifndef _ALL_PASS_FILTER_H_
 #define _ALL_PASS_FILTER_H_
 
+#include <stdio.h>
+
 class AllPassFilter {
 	size_t size;
 	float g;

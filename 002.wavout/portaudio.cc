@@ -4,6 +4,7 @@
 #include "wavReader.h"
 #include "combFilter.h"
 #include "allPassFilter.h"
+#include "Reverb.h"
 #include "common.h"
 
 #define NUM_SECONDS 3
@@ -12,6 +13,7 @@
 static WavReader *wr;
 static CombFilter *cf;
 static AllPassFilter *apf;
+static Reverb *reverb;
 
 /* This routine will be called by the PortAudio engine when audio is needed.
    It may called at interrupt level on some machines so don't do anything
@@ -41,7 +43,8 @@ static int patestCallback(const void *inputBuffer, void *outputBuffer,
 			_in = 0.0f;
 		}
 		//cf->enqdeq(&_in, &_out);
-		apf->enqdeq(&_in, &_out);
+		//apf->enqdeq(&_in, &_out);
+		_out = reverb->step(_in);
 		*out++ = _out;
 	}
 	return 0;
@@ -54,6 +57,7 @@ int main() {
 	wr = new WavReader();
 	cf = new CombFilter(22050, .8f);
 	apf = new AllPassFilter(22050, .5f);
+	reverb = new Reverb();
 
 	err = Pa_Initialize();
 	if (err != paNoError) {
@@ -98,6 +102,7 @@ int main() {
 	delete wr;
 	delete cf;
 	delete apf;
+	delete reverb;
 
 	return 0;
 }

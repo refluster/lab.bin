@@ -1,6 +1,8 @@
 #ifndef _COMB_FILTER_H_
 #define _COMB_FILTER_H_
 
+#include <stdio.h>
+
 class CombFilter {
 	size_t size;
 	float g;
