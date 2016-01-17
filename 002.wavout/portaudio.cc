@@ -50,11 +50,16 @@ static int patestCallback(const void *inputBuffer, void *outputBuffer,
 	return 0;
 }
 
-int main() {
+int main(int argc, char **argv) {
 	PaStream *stream;
 	PaError err;
 
-	wr = new WavReader();
+	if (argc < 2) {
+		puts("specify wav file");
+		return 1;
+	}
+
+	wr = new WavReader(argv[1]);
 	cf = new CombFilter(22050, .8f);
 	apf = new AllPassFilter(22050, .5f);
 	reverb = new Reverb();

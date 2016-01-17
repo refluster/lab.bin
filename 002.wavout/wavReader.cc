@@ -3,10 +3,8 @@
 #include <sndfile.h>
 #include "wavReader.h"
 
-WavReader::WavReader() {
+WavReader::WavReader(char *fname) {
 	// Open sound file
-	const char *fname = "water-drop1.wav";
-
 	this->sndFile = sf_open(fname, SFM_READ, &this->sndInfo);
 
 	if (this->sndFile == NULL) {

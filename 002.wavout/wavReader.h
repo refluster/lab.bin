@@ -12,7 +12,7 @@ private:
 	SF_INFO sndInfo;
 
 public:
-	WavReader();
+	WavReader(char *fname);
 	~WavReader();
 	int read(float *v);
 };
