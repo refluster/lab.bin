@@ -36,7 +36,7 @@ int wavInit() {
 	}
 
 	// Allocate memory
-	stat.bufStart = malloc(stat.sndInfo.frames * sizeof(float));
+	stat.bufStart = (float*)malloc(stat.sndInfo.frames * sizeof(float));
 	stat.bufEnd = stat.bufStart + stat.sndInfo.frames;
 	stat.ptr = stat.bufEnd;
 	if (stat.bufStart == NULL) {
