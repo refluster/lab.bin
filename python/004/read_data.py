@@ -26,8 +26,6 @@ def read_temperature_csv():
         record = [year, month, day, weekday, clockIndex, temperature]
         data.append(record)
             
-read_temperature_csv()
-
 def read_light_aircon_14f_csv():
     f = open('pow_light_aircon_14f_short.csv', 'r')
     dataReader = csv.reader(f)
@@ -39,8 +37,8 @@ def read_light_aircon_14f_csv():
         for c in range(1, 10):
             data[i].append(d[c])
 
-read_light_aircon_14f_csv()
-    
-for r in data:
-    print r
+def read():
+    read_temperature_csv()
+    read_light_aircon_14f_csv()
+    return data
 
