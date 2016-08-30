@@ -1,6 +1,6 @@
 import read_data
 import tensorflow as tf
-from tensorflow.models.rnn import rnn, rnn_cell, seq2seq
+#from tensorflow.models.rnn import rnn, rnn_cell, seq2seq
 
 num_of_input_nodes = 1
 num_of_hidden_nodes = 48
@@ -46,8 +46,8 @@ def inference(indata, istate):
         in3 = tf.matmul(in2, weight1_var) + bias1_var
         in4 = tf.split(0, length_of_sequences, in3)
 
-        cell = rnn_cell.BasicLSTMCell(num_of_hidden_nodes, forget_bias=forget_bias)
-        rnn_output, states_op = rnn.rnn(cell, in4, initial_state=istate)
+        cell = tf.nn.rnn_cell.BasicLSTMCell(num_of_hidden_nodes, forget_bias=forget_bias)
+        rnn_output, states_op = tf.nn.rnn(cell, in4, initial_state=istate)
         output_op = tf.matmul(rnn_output[-1], weight2_var) + bias2_var
 
         w1_hist = tf.histogram_summary("weights1", weight1_var )
@@ -82,13 +82,13 @@ def training(loss):
         train_step = optimizer.minimize(loss)
         return train_step
 
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+
 def main():
     data = read_data.read()
     #for d in data:
     #    print d
     #create_model(data)
-
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
 
     with tf.Graph().as_default():
         input_ph = tf.placeholder(tf.float32, [None, length_of_sequences, num_of_input_nodes],
@@ -131,9 +131,9 @@ main()
 
 exit
 
-state = tf.zeros([batch_size, rnn_cell.state_size])
+state = tf.zeros([batch_size, tf.nn.rnn_cell.state_size])
 X_split = tf.split(0, time_step_size, x_data)
-outputs, state = seq2seq.rnn_decoder(X_split, state, rnn_cell)
+outputs, state = tf.nn.seq2seq.rnn_decoder(X_split, state, rnn_cell)
 print(state)
 print(outputs)
 
@@ -141,7 +141,7 @@ logits = tf.reshape(tf.concat(1, outputs), [-1, rnn_size])
 targets = tf.reshape(sample[1:], [-1])
 weights = tf.ones([time_step_size * batch_size])
 
-loss = seq2seq.sequence_loss_by_example([logits], [targets], [weights], rnn_size)
+loss = tf.nn.seq2seq.sequence_loss_by_example([logits], [targets], [weights], rnn_size)
 cost = tf.reduce_sum(loss) / batch_size
 train_op = tf.train.RMSPropOptimizer(0.01, 0.9).minimize(cost)
 
