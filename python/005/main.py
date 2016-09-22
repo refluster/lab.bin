@@ -3,12 +3,12 @@ import numpy as np
 from random import shuffle
 import read_data
  
-NUM_EXAMPLES = 10000
-test_input = train_input[NUM_EXAMPLES:]
-test_output = train_output[NUM_EXAMPLES:] #everything beyond 10,000
-
-train_input = train_input[:NUM_EXAMPLES]
-train_output = train_output[:NUM_EXAMPLES] #till 10,000
+#NUM_EXAMPLES = 10000
+#test_input = train_input[NUM_EXAMPLES:]
+#test_output = train_output[NUM_EXAMPLES:] #everything beyond 10,000
+#
+#train_input = train_input[:NUM_EXAMPLES]
+#train_output = train_output[:NUM_EXAMPLES] #till 10,000
 
 def main():
     num_hidden = 24
@@ -36,8 +36,8 @@ def main():
     minimize = optimizer.minimize(mse)
 
     ## under ############################
-    mistakes = tf.not_equal(tf.argmax(target, 1), tf.argmax(prediction, 1))
-    error = tf.reduce_mean(tf.cast(mistakes, tf.float32))
+    #mistakes = tf.not_equal(tf.argmax(target, 1), tf.argmax(prediction, 1))
+    #error = tf.reduce_mean(tf.cast(mistakes, tf.float32))
 
     init_op = tf.initialize_all_variables()
     sess = tf.Session()
@@ -46,15 +46,26 @@ def main():
     batch_size = 1000
     no_of_batches = int(len(train_input)/batch_size)
     epoch = 5000
-    for i in range(epoch):
-        ptr = 0
-        for j in range(no_of_batches):
-            inp, out = train_input[ptr:ptr+batch_size], train_output[ptr:ptr+batch_size]
-            ptr+=batch_size
-            sess.run(minimize,{data: inp, target: out})
-        print "Epoch - ",str(i)
-    incorrect = sess.run(error,{data: test_input, target: test_output})
-    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
+
+    train_input = readdata[0]
+    train_output = readdata[1]
+
+    ptr = num_history
+    for i in range(no_of_batches):
+        inp, out = train_input[ptr:ptr+batch_size], train_output[ptr:ptr+batch_size]
+        ptr += batch_size
+        sess.run(minimize,{data: inp, target: out})
+#    incorrect = sess.run(error,{data: test_input, target: test_output})
+#    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
     sess.close()
 
-main()
+#main()
+
+def test():
+    read_data.init(4)
+    a, b = read_data.read_next(3)
+    print(a)
+    print(b)
+
+
+test()
