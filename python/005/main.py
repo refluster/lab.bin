@@ -62,10 +62,9 @@ def main():
 #main()
 
 def test():
-    read_data.init(4)
-    a, b = read_data.read_next(3)
+    read_data.init(4, 3)
+    a, b = read_data.read_next()
     print(a)
     print(b)
-
 
 test()
