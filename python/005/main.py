@@ -27,7 +27,6 @@ def main():
     ## network model ############################
     cell = tf.nn.rnn_cell.LSTMCell(num_hidden, state_is_tuple=True)
     val, state = tf.nn.dynamic_rnn(cell, data, dtype=tf.float32)
-#    print("state = {0}").format(state.get_shape())
     print("val = {0}").format(val.get_shape())
 
     val = tf.transpose(val, [1, 0, 2])
@@ -66,11 +65,13 @@ def main():
 
     ptr = num_history
     #for i in range(no_of_batches):
-    for i in range(1):
-        #inp, out = train_input[ptr:ptr+batch_size], train_output[ptr:ptr+batch_size]
+    for i in range(10):
         inp, out = read_data.read_next()
         ptr += batch_size
         sess.run(minimize,{data: inp, target: out})
+
+        print(sess.run(mse,{data: inp, target: out}))
+
 #    incorrect = sess.run(error,{data: test_input, target: test_output})
 #    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
     sess.close()
