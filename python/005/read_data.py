@@ -4,39 +4,34 @@ import numpy as np
 ptr = 0
 history_size = 4
 batch_size = 3
-data = []
+data = None
 
-def read_csv():
-#    for fname in ['data.csv', 'data2.csv']:
-    for fname in ['data.csv']:
-        f = open(fname, 'r')
-        dataReader = csv.reader(f)
-        rssi = []
-        distance = []
-        for c in dataReader:
-            rssi.append([float(c[1])])
-            distance.append([float(c[2])])
-        data.append([np.array(rssi),np.array(distance)])
+def read_csv(fname):
+    global data
+
+    f = open(fname, 'r')
+    dataReader = csv.reader(f)
+    rssi = []
+    distance = []
+    for c in dataReader:
+        rssi.append([float(c[1])])
+        distance.append([float(c[2])])
+    data = [np.array(rssi),np.array(distance)]
     return data
             
-def read():
-    data = read_csv()
-    return data
-
 def init(_history_size, _batch_size):
     global ptr, history_size, batch_size
 
     ptr = 0
     history_size = _history_size
     batch_size = _batch_size
-    read()
+    read_csv('data.csv')
 
 def read_next():
-    global ptr
+    global ptr, data
 
-    d = data[0] # fix to the first csv file
-    rssi = d[0]
-    distance = d[1]
+    rssi = data[0]
+    distance = data[1]
 
     rssi_batch = []
     distance_batch = []
