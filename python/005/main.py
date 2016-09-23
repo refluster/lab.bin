@@ -3,20 +3,10 @@ import numpy as np
 from random import shuffle
 import read_data
  
-#NUM_EXAMPLES = 10000
-#test_input = train_input[NUM_EXAMPLES:]
-#test_output = train_output[NUM_EXAMPLES:] #everything beyond 10,000
-#
-#train_input = train_input[:NUM_EXAMPLES]
-#train_output = train_output[:NUM_EXAMPLES] #till 10,000
-
 def main():
     num_hidden = 20
     num_history = 4
     batch_size = 3
-
-    ## read data from csv ############################
-    readdata = read_data.read()
 
     ## placeholders ############################
     data = tf.placeholder(tf.float32, [None, num_history, 1])
@@ -25,7 +15,7 @@ def main():
     print("data = {0}").format(data.get_shape())
     print("target = {0}").format(target.get_shape())
 
-    ## network model ############################
+    ## prediction network model ############################
     cell = tf.nn.rnn_cell.LSTMCell(num_hidden, state_is_tuple=True)
     val, state = tf.nn.dynamic_rnn(cell, data, dtype=tf.float32)
     print("val = {0}").format(val.get_shape())
@@ -43,43 +33,32 @@ def main():
     print("weight = {0}").format(weight.get_shape())
     print("bias = {0}").format(bias.get_shape())
 
-    # for check
+    ## checking tensor size ############################
     _a = tf.matmul(last, weight)
     print("last*w = {0}").format(_a.get_shape())
     _b = _a + bias
     print("last*w + b = {0}").format(_b.get_shape())
 
+    ## calculate error ############################
     mse = tf.reduce_mean(tf.square(target - prediction))
 
+    ## error minimization ############################
     optimizer = tf.train.AdamOptimizer()
     minimize = optimizer.minimize(mse)
 
+    ## initialization ############################
     init_op = tf.initialize_all_variables()
     sess = tf.Session()
     sess.run(init_op)
 
-    #no_of_batches = int(len(train_input)/batch_size)
-    epoch = 5000
-
     read_data.init(num_history, batch_size)
 
-    #for i in range(no_of_batches):
     for i in range(181/batch_size - num_history):
         inp, out = read_data.read_next()
         sess.run(minimize,{data: inp, target: out})
 
         print(sess.run(mse,{data: inp, target: out}))
 
-#    incorrect = sess.run(error,{data: test_input, target: test_output})
-#    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
     sess.close()
 
 main()
-
-def test():
-    read_data.init(4, 3)
-    a, b = read_data.read_next()
-    print(a)
-    print(b)
-
-#test()
