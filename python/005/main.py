@@ -12,7 +12,7 @@ import read_data
 
 def main():
     num_hidden = 20
-    num_history = 24
+    num_history = 4
 
     ## read data from csv ############################
     readdata = read_data.read()
@@ -59,7 +59,7 @@ def main():
     sess.run(init_op)
 
     batch_size = 1000
-    no_of_batches = int(len(train_input)/batch_size)
+    #no_of_batches = int(len(train_input)/batch_size)
     epoch = 5000
 
     read_data.init(4, 3)

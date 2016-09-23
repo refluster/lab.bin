@@ -15,7 +15,7 @@ def read_csv():
         distance = []
         for c in dataReader:
             rssi.append([float(c[1])])
-            distance.append(float(c[2]))
+            distance.append([float(c[2])])
         data.append([np.array(rssi),np.array(distance)])
     return data
             
