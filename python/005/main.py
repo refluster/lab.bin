@@ -13,6 +13,7 @@ import read_data
 def main():
     num_hidden = 20
     num_history = 4
+    batch_size = 3
 
     ## read data from csv ############################
     readdata = read_data.read()
@@ -57,17 +58,14 @@ def main():
     sess = tf.Session()
     sess.run(init_op)
 
-    batch_size = 1000
     #no_of_batches = int(len(train_input)/batch_size)
     epoch = 5000
 
-    read_data.init(4, 3)
+    read_data.init(num_history, batch_size)
 
-    ptr = num_history
     #for i in range(no_of_batches):
-    for i in range(10):
+    for i in range(181/batch_size - num_history):
         inp, out = read_data.read_next()
-        ptr += batch_size
         sess.run(minimize,{data: inp, target: out})
 
         print(sess.run(mse,{data: inp, target: out}))
