@@ -52,12 +52,12 @@ def main():
     sess.run(init_op)
 
     for n in range(50):
-        read_data.init('data.csv', num_history, batch_size)
+        read_data.init('data.csv', num_history)
         for i in range(181/batch_size - num_history):
-            inp, out = read_data.read_next()
-            for j in range(len(inp)):
-                sess.run(minimize,{data: inp[j], target: out[j]})
-            print(sess.run(prediction,{data: inp[2], target: out[2]}))
+            for j in range(batch_size):
+                inp, out = read_data.read_next()
+                sess.run(minimize,{data: inp, target: out})
+            print(sess.run(prediction,{data: inp, target: out}))
         print("==============================")
 
     sess.close()

@@ -3,7 +3,6 @@ import numpy as np
 
 ptr = 0
 history_size = 4
-batch_size = 3
 data = None
 
 def read_csv(fname):
@@ -19,12 +18,11 @@ def read_csv(fname):
     data = [np.array(rssi),np.array(distance)]
     return data
             
-def init(fname, _history_size, _batch_size):
-    global ptr, history_size, batch_size
+def init(fname, _history_size):
+    global ptr, history_size
 
     ptr = 0
     history_size = _history_size
-    batch_size = _batch_size
     read_csv(fname)
 
 def read_next():
@@ -33,12 +31,8 @@ def read_next():
     rssi = data[0]
     distance = data[1]
 
-    rssi_batch = []
-    distance_batch = []
-    for i in range(batch_size):
-        rssi_batch.append(np.array(rssi[ptr + i: ptr + i + history_size]))
-        distance_batch.append(distance[ptr + i + history_size - 1])
+    rssi = np.array(rssi[ptr: ptr + history_size])
+    distance = distance[ptr + history_size - 1]
+    ptr += 1
 
-    ptr += batch_size
-
-    return rssi_batch, distance_batch
+    return rssi, distance
