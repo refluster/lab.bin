@@ -1,24 +1,24 @@
 import tensorflow as tf
 import numpy as np
-from random import shuffle
+import math
 import read_data
  
 def main():
     num_hidden = 20
-    num_history = 4
+    num_history = 12
     batch_size = 3
 
     ## placeholders ############################
-    data = tf.placeholder(tf.float32, [None, num_history, 1])
-    target = tf.placeholder(tf.float32, [None, 1])
+    data = tf.placeholder(tf.float32, shape=(num_history, 1))
+    target = tf.placeholder(tf.float32, shape=(1))
 
     print("data = {0}").format(data.get_shape())
     print("target = {0}").format(target.get_shape())
 
     ## prediction network model ############################
     cell = tf.nn.rnn_cell.LSTMCell(num_hidden, state_is_tuple=True)
-    val, state = tf.nn.dynamic_rnn(cell, data, dtype=tf.float32)
-    print("val = {0}").format(val.get_shape())
+    val, state = tf.nn.rnn(cell, [data], dtype=tf.float32)
+    print("val = {0}").format(val[0].get_shape())
 
     val = tf.transpose(val, [1, 0, 2])
     print("val = {0}").format(val.get_shape())
@@ -26,9 +26,9 @@ def main():
     last = tf.gather(val, int(val.get_shape()[0]) - 1)
     print("last = {0}").format(last.get_shape())
 
-    weight = tf.Variable(tf.truncated_normal([num_hidden, int(target.get_shape()[1])]))
-    bias = tf.Variable(tf.constant(0.1, shape=[target.get_shape()[1]]))
-    prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+    weight = tf.Variable(tf.truncated_normal([num_hidden, int(target.get_shape()[0])]))
+    bias = tf.Variable(tf.constant(0.1, shape=[target.get_shape()[0]]))
+    prediction = tf.matmul(last, weight) + bias
 
     print("weight = {0}").format(weight.get_shape())
     print("bias = {0}").format(bias.get_shape())
@@ -51,13 +51,14 @@ def main():
     sess = tf.Session()
     sess.run(init_op)
 
-    read_data.init(num_history, batch_size)
-
-    for i in range(181/batch_size - num_history):
-        inp, out = read_data.read_next()
-        sess.run(minimize,{data: inp, target: out})
-
-        print(sess.run(mse,{data: inp, target: out}))
+    for n in range(50):
+        read_data.init('data.csv', num_history, batch_size)
+        for i in range(181/batch_size - num_history):
+            inp, out = read_data.read_next()
+            for j in range(len(inp)):
+                sess.run(minimize,{data: inp[j], target: out[j]})
+            print(sess.run(prediction,{data: inp[2], target: out[2]}))
+        print("==============================")
 
     sess.close()
 
