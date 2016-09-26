@@ -4,7 +4,7 @@ import math
 import read_data
  
 def main():
-    num_hidden = 20
+    num_hidden = 21
     num_history = 12
     batch_size = 3
 
@@ -18,7 +18,7 @@ def main():
     ## prediction network model ############################
     cell = tf.nn.rnn_cell.LSTMCell(num_hidden, state_is_tuple=True)
     val, state = tf.nn.rnn(cell, [data], dtype=tf.float32)
-    print("val = {0}").format(val[0].get_shape())
+    print("val = {0}").format(val)
 
     val = tf.transpose(val, [1, 0, 2])
     print("val = {0}").format(val.get_shape())
@@ -56,8 +56,9 @@ def main():
         for i in range(181/batch_size - num_history):
             for j in range(batch_size):
                 inp, out = read_data.read_next()
-                sess.run(minimize,{data: inp, target: out})
-            print(sess.run(prediction,{data: inp, target: out}))
+                mse_val, _ = sess.run([mse, minimize],{data: inp, target: out})
+            print(mse_val)
+
         print("==============================")
 
     sess.close()
