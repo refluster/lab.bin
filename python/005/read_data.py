@@ -19,13 +19,13 @@ def read_csv(fname):
     data = [np.array(rssi),np.array(distance)]
     return data
             
-def init(_history_size, _batch_size):
+def init(fname, _history_size, _batch_size):
     global ptr, history_size, batch_size
 
     ptr = 0
     history_size = _history_size
     batch_size = _batch_size
-    read_csv('data.csv')
+    read_csv(fname)
 
 def read_next():
     global ptr, data
